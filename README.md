@@ -1,4 +1,4 @@
-# A2E: Audio to English 
+# A2E
 
 This repository implements a two-stage pipeline:
 
