@@ -1,0 +1,47 @@
+### Model
+model_name_or_path: Qwen/Qwen3-8B
+trust_remote_code: true
+
+### Stage
+stage: sft
+do_train: true
+finetuning_type: lora
+
+### Dataset
+dataset_dir: data/translate
+dataset: demo
+template: qwen3
+cutoff_len: 2048
+preprocessing_num_workers: 16
+max_samples: 100000
+packing: false
+
+### Output
+output_dir: ./saves/qwen3-8b-lora
+logging_steps: 5
+save_steps: 100
+plot_loss: true
+report_to: none
+
+### Training
+per_device_train_batch_size: 2
+gradient_accumulation_steps: 8
+learning_rate: 5e-5
+num_train_epochs: 3
+lr_scheduler_type: cosine
+warmup_steps: 0
+optim: adamw_torch
+max_grad_norm: 1.0
+bf16: true
+ddp_timeout: 180000000
+
+### LoRA
+lora_rank: 64
+lora_alpha: 64
+lora_dropout: 0.0
+lora_target: all
+
+### Misc
+flash_attn: auto
+enable_thinking: false
+include_num_input_tokens_seen: true

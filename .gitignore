@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Conda
+env/
+*.conda
+*.env
+
+# Logs
+*.log
+
+# Results
+results/
+translation/saves/
+
+# Checkpoints
+*.bin
+*.pt
+*.ckpt
+*.safetensors
+
+# Wandb
+wandb/
+
+# System
+.DS_Store
