@@ -7,16 +7,6 @@ This repository implements a two-stage pipeline:
 
 ------------------------------------------------------------------------
 
-# Project Structure
-
-A2E_model/ ├── asr/ │ ├── train_whisper.py │ └── requirements.txt │ ├──
-translation/ │ ├── configs/ │ │ └── qwen_sft.yaml │ └── requirements.txt
-│ ├── data/ │ ├── transcribe/ │ │ ├── train/ │ │ ├── validation/ │ │ └──
-test/ │ │ │ └── translate/ │ ├── demo.json │ └── dataset_info.json │ ├──
-results/ │ └── whisper_medium/ │ └── README.md
-
-------------------------------------------------------------------------
-
 # ASR (Whisper Fine-tuning)
 
 ## Environment Setup
