@@ -1,85 +1,129 @@
-# A2E: ASR + Translation Pipeline
+# A2E: Audio to English 
 
 This repository implements a two-stage pipeline:
 
-1.  **ASR fine-tuning** using Whisper for Wardaman transcription\
-2.  **Translation fine-tuning** using Qwen with LoRA via LLaMAFactory
+1. **ASR fine-tuning** using Whisper for Wardaman transcription
+2. **Translation fine-tuning** using Qwen with LoRA via LLaMAFactory
 
-------------------------------------------------------------------------
 
-# ASR (Whisper Fine-tuning)
 
-## Environment Setup
+# **1. ASR (Whisper Fine-tuning)**
 
-conda create -n whisper_release python=3.10 conda activate
-whisper_release pip install -r asr/requirements.txt
+## **Environment Setup**
 
-CUDA 11.8 or compatible GPU is required.
+```
+conda create -n whisper_release python=3.10
+conda activate whisper_release
+pip install -r asr/requirements.txt
+```
 
-## Data Format
 
-data/transcribe/ must follow:
 
-data/transcribe/ ├── train/ ├── validation/ └── test/
+## **Data Format**
 
-Each JSON line should contain:
+The directory structure must be:
 
+```
+data/transcribe/
+├── train.jsonl
+├── val.jsonl
+├── test.jsonl
+├── train/
+├── validation/
+└── test/
+```
+
+Each JSON line file should follow this format:
+
+```
 { "audio": "filename.wav", "text": "transcription" }
+```
+
+
 
 ## Training
 
-python asr/train_whisper.py
+```bash
+python asr/train_whisper.py \
+  --data_dir data/transcribe \
+  --model_name openai/whisper-medium \
+  --language su \
+  --output_dir results/whisper_medium \
+  --max_steps 300
+```
 
-## Output
 
-Fine-tuned checkpoints are saved to:
 
-results/whisper_medium/
+## **Output**
 
-------------------------------------------------------------------------
+Fine-tuned Whisper checkpoints are saved to:
 
-# Translation (Qwen + LoRA via LLaMAFactory)
+```
+result/
+```
 
-## Environment Setup
 
-conda create -n llama_release python=3.10 conda activate llama_release
+
+
+
+# **2. Translation (Qwen + LoRA via LLaMAFactory)**
+
+
+
+## **Environment Setup**
+
+```python
+conda create -n llama_release python=3.10
+conda activate llama_release
 pip install -r translation/requirements.txt
+```
 
-Requires CUDA 12.x compatible GPU.
 
-## Dataset Format
 
-Data must be placed in:
+## **Dataset Format**
 
+Place translation data in:
+
+```
 data/translate/
+```
 
-dataset_info.json example:
+A required dataset_info.json example:
 
-{ "demo": { "file_name": "demo.json", "formatting": "sharegpt",
-"columns": { "messages": "messages" }, "tags": { "role_tag": "role",
-"content_tag": "content", "user_tag": "user", "assistant_tag":
-"assistant", "system_tag": "system" } } }
+```
+{
+  "demo": {
+    "file_name": "demo.json",
+    "formatting": "sharegpt",
+    "columns": { "messages": "messages" },
+    "tags": {
+      "role_tag": "role",
+      "content_tag": "content",
+      "user_tag": "user",
+      "assistant_tag": "assistant",
+      "system_tag": "system"
+    }
+  }
+}
+```
 
-Training sample format:
+Each training example should follow:
 
-{ "messages": \[ {"role": "system", "content": "..."}, {"role": "user",
-"content": "..."}, {"role": "assistant", "content": "..."} \] }
+```
+{
+ "messages": [
+  {"role": "system", "content": "..."},
+  {"role": "user", "content": "..."},
+  {"role": "assistant", "content": "..."}
+ ]
+}
+```
 
-## Training
 
+
+## **Training**
+
+```
 llamafactory-cli train translation/configs/qwen_sft.yaml
+```
 
-## Output
-
-LoRA checkpoints are saved to:
-
-translation/saves/qwen3-8b-lora/
-
-------------------------------------------------------------------------
-
-# Hardware Requirements
-
--   NVIDIA GPU
--   ASR: CUDA 11.8+
--   Translation: CUDA 12.x recommended
--   24GB+ GPU memory recommended for Qwen3-8B LoRA training
