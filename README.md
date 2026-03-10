@@ -1,4 +1,4 @@
-# A2E
+# A2E: Audio to English 
 
 This repository implements a two-stage pipeline:
 
@@ -66,7 +66,87 @@ result/
 
 
 
-# **2. Translation (Qwen + LoRA via LLaMAFactory)**
+# **2. Lexicon Retrieval & Injection**
+
+This module augments ASR transcription using a Wardaman-English lexicon.
+
+It performs:
+
+- Exact match
+- CER-based fuzzy retrieval
+- Optional affix matching
+- Top-K filtering
+- Structured injection formatting
+
+
+
+## **Dictionary Format**
+
+Lexicon must be a CSV file, required columns:
+
+```
+lexical_unit, variant, pos, gloss
+```
+
+
+
+## **Injection Input Format**
+
+Input JSONL (from ASR output):
+
+```
+{ "text": "transcription sentence" }
+```
+
+
+
+## **Run Lexicon Injection**
+
+```
+python lexicon/lexinject.py \
+ --input data/transcribe/train.jsonl \
+ --output data/translate/train_with_lexicon.jsonl \
+ --dict cleaned_lexicon.csv \
+ --top_k 2 \
+ --cer_threshold 0.2 \
+ --output_mode flat_json
+```
+
+
+
+## **Output**
+
+Each sample will include an additional field:
+
+```
+{
+ "text": "...",
+ "lexicon": {
+  "word1": ["gloss1", "gloss2"],
+  "word2": ["gloss3"]
+ }
+}
+```
+
+
+
+## **Statistics**
+
+During injection, the script reports:
+
+- Average entries per word (before top-k)
+- Average entries per word (after top-k)
+- Exact match ratio
+
+These metrics are useful for:
+
+- Ablation studies
+- Zero-shot experiments
+- Injection density control
+
+
+
+# **3. Translation (Qwen + LoRA via LLaMAFactory)**
 
 
 
