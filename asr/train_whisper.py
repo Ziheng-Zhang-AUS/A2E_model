@@ -138,7 +138,7 @@ def main():
         remove_columns=dataset["train"].column_names,
     )
 
-    model.generation_config.language = "sundanese"
+    model.generation_config.language = args.language
     model.generation_config.task = "transcribe"
     model.generation_config.forced_decoder_ids = None
 
